@@ -60,6 +60,22 @@ router.post('/login', async (req, res) => {
     }
 });
 
+router.post('/validate-token', (req, res) => {
+    const { token } = req.body;
+
+    if (!token) {
+        return res.status(400).json({ message: 'No token provided' });
+    }
+
+    try {
+        // Verify the token
+        const decoded = jwt.verify(token, JWT_SECRET);  // Replace with your secret key
+        res.json({ isValid: true, userId: decoded.userId });
+    } catch (err) {
+        res.status(401).json({ message: 'Invalid or expired token' });
+    }
+});
+
 // Middleware to protect routes
 function authenticateToken(req, res, next) {
     const token = req.headers['authorization'];
